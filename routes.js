@@ -1,15 +1,14 @@
 const express = require('express');
 const route = express.Router();
 const homeController = require('./src/controllers/homeController');
-const contatoController = require('./src/controllers/contatoController');
+const loginController = require('./src/controllers/loginController');
 
 
 //pagina de home
 route.get('/', homeController.paginacao);
-route.post('/', homeController.paginaPost);
 
-//pagina contato
+//pagina de login
+route.get('/login', loginController.index);
 
-route.get('/contato', contatoController.paginaInicial);
 
 module.exports = route;
