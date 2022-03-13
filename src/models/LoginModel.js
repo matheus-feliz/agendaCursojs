@@ -20,21 +20,38 @@ class Login {
     constructor(boby) {
         this.boby = boby;
         this.errors = [];
-        this.use = null;
+        this.user = null;
+    }
+
+
+    async login() {
+
+        if (this.errors.length > 0) return;
+        this.user = await LoginModel.findOne({ email: this.boby.email });
+
+        if (!this.user) {
+            this.errors.push('usuário inválido');
+            return;
+        }
+
+        if (!bcryptjs.compareSync(this.boby.password, this.user.password)) {
+            this.errors.push('Senha inválida');
+            this.user = null;
+            return;
+        }
+
     }
 
     async register() {
         this.valida();
         await this.userExists();
         if (this.errors.length > 0) return;
-        try {
 
-            const salt = bcryptjs.genSaltSync();
-            this.boby.password = bcryptjs.hashSync(this.boby.password, salt);
-            this.use = await LoginModel.create(this.boby);
-        } catch (e) {
-            console.log(e);
-        }
+
+        const salt = bcryptjs.genSaltSync();
+        this.boby.password = bcryptjs.hashSync(this.boby.password, salt);
+        this.use = await LoginModel.create(this.boby);
+
     }
     async userExists() {
         const user = await LoginModel.findOne({ email: this.boby.email });
